@@ -1067,20 +1067,11 @@ html{ overflow-x:clip; }
           <label for="attNo">Regretfully decline</label>
         </div>
       </div>
-
-      <div class="rsvp-row" id="guestRow">
-        <span class="lbl" id="guestLbl">How many people are coming (including you)?</span>
-        <div class="stepper" role="group" aria-labelledby="guestLbl">
-          <button type="button" id="gMinus" aria-label="Fewer guests">&minus;</button>
-          <output id="gCount" aria-live="polite">1</output>
-          <button type="button" id="gPlus" aria-label="More guests">+</button>
-          <span class="unit" id="gUnit">person</span>
-        </div>
       </div>
 
       <div class="rsvp-row">
         <label for="rsvpNote">A note (optional)</label>
-        <textarea id="rsvpNote" name="note" maxlength="300" placeholder="Names of your guests, dietary needs, a blessing…"></textarea>
+        <textarea id="rsvpNote" name="note" maxlength="300" placeholder="Dietary needs, a blessing for the Pastor…"></textarea>
       </div>
 
       <input class="hp" type="text" name="website" id="rsvpHp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -1089,7 +1080,7 @@ html{ overflow-x:clip; }
     </form>
 
     <div class="rsvp-thanks" id="rsvpThanks" hidden>
-      <h3>Thank you!</h3>
+      <h3 id="thanksHead">Thank you!</h3>
       <p id="thanksText"></p>
       <button type="button" class="again" id="rsvpAgain">Respond for someone else</button>
     </div>
@@ -1401,15 +1392,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }).observe(rig, { attributes: true, attributeFilter: ["class"] });
 
-  function renderCount() {
-    $("gCount").textContent = count;
-    $("gUnit").textContent = count === 1 ? "person" : "people";
+  function renderCount() {       /* guest counter removed: each RSVP counts as one person */
   }
-  $("gMinus").addEventListener("click", function () { if (count > 1) { count--; renderCount(); } });
-  $("gPlus").addEventListener("click", function () { if (count < 20) { count++; renderCount(); } });
 
   function attending() { return $("attYes").checked; }
-  function syncAttending() { $("guestRow").hidden = !attending(); }
+  function syncAttending() {}
   $("attYes").addEventListener("change", syncAttending);
   $("attNo").addEventListener("change", syncAttending);
 
@@ -1450,8 +1437,9 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify(payload)
     }).then(function () {
       form.hidden = true; thanks.hidden = false;
+      $("thanksHead").textContent = yes ? "Thank you, Esteemed " + title + " " + name + "." : "Thank you!";
       $("thanksText").textContent = yes
-        ? "We have you down, " + title + " " + name + ", with " + count + (count === 1 ? " person" : " people") + ". We look forward to celebrating with you."
+        ? "We look forward to having you with us as we celebrate God\u2019s Gift to us."
         : "We are sorry you can't make it, " + title + " " + name + ". You will be missed, and thank you for letting us know.";
     }).catch(function () {
       msg.textContent = "Something went wrong. Please check your connection and try again.";
